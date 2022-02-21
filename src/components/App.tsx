@@ -37,7 +37,7 @@ const App: React.FC<{}> = () => {
     <div className="App">
       <Controls
         rover={{ position: rover, set: setRover }}
-        sequence={{ set: setCommandSequence, run: simulate }}
+        sequence={{ value: sequence, set: setCommandSequence, run: simulate }}
         grid={{
           size: gridSize,
           set: setGridSize,

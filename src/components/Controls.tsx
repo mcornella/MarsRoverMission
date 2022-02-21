@@ -12,7 +12,7 @@ const Controls: React.FC<{
     set: Function
     new: Function
   }
-  sequence: { set: Function; run: Function }
+  sequence: { value: string; set: Function; run: Function }
 }> = ({ rover, grid, sequence }) => {
   // Common onChange event handler
   function onChange(
@@ -61,6 +61,28 @@ const Controls: React.FC<{
     }
 
     return false
+  }
+
+  // Convert Arrow key presses to valid commands
+  function onCommandSequenceKeyDown(event: React.KeyboardEvent) {
+    switch (event.key) {
+      case "Enter":
+        sequence.run()
+        break
+      case "ArrowUp":
+        sequence.set(sequence.value + "F")
+        break
+      case "ArrowLeft":
+        sequence.set(sequence.value + "L")
+        break
+      case "ArrowRight":
+        sequence.set(sequence.value + "R")
+        break
+      default:
+        return
+    }
+
+    event.preventDefault()
   }
 
   // Transform rover direction to a valid value for the <select>
@@ -120,13 +142,15 @@ const Controls: React.FC<{
           </select>
         </fieldset>
         <fieldset>
-          <legend>Command</legend>
+          <legend>Command sequence</legend>
           <input
             type="text"
             name="sequence"
             autoComplete="off"
             placeholder="Valid instructions: F, R or L"
+            value={sequence.value}
             onChange={onChange}
+            onKeyDown={onCommandSequenceKeyDown}
           />
           <button type="button" onClick={() => sequence.run()}>
             Run
