@@ -1,26 +1,21 @@
 /* Controls */
 .App-controls {
   font-size: 2rem;
-  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  max-width: 500px;
+  margin: 0 auto 2rem;
 }
 
-.App-controls__buttons {
-  width: 100%;
+.App-controls fieldset {
   margin-bottom: 2rem;
-  display: flex;
-  justify-content: space-between;
 }
 
 .App-controls button {
-  font-size: calc(10px + 2vmin);
-}
-
-.App-controls__rover {
   font-size: 1.5rem;
 }
 
-.App-controls__rover input,
-.App-controls__rover select {
+.App-controls input,
+.App-controls select {
   margin: 0.5rem;
   font-size: 1.5rem;
   height: 2rem;

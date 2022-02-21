@@ -21,7 +21,7 @@ const App: React.FC<{}> = () => {
   const [gridSize, setGridSize] = useState(10)
   const [rover, setRover] = useState({
     x: 5,
-    y: 0,
+    y: 5,
     direction: Direction.N,
   })
   const [command, setCommand] = useState("")
@@ -65,12 +65,12 @@ const App: React.FC<{}> = () => {
       }
 
       if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) {
-        setTimeout(() => alert("Out of bounds!"), 0)
+        setTimeout(() => alert(`Out of bounds at (${x}, ${y})`), 0)
         return
       }
 
       if (grid[x][y]) {
-        setTimeout(() => alert("Obstacle encountered!"), 0)
+        setTimeout(() => alert(`Obstacle encountered at (${x}, ${y})!`), 0)
         return
       }
 
@@ -85,6 +85,7 @@ const App: React.FC<{}> = () => {
         command={{ set: setCommand, run: simulate }}
         grid={{
           size: gridSize,
+          set: setGridSize,
           new: () => setGrid(newGrid({ gridSize, rover })),
         }}
       />

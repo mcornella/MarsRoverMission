@@ -6,26 +6,32 @@ const Controls: React.FC<{
   rover: { position: RoverPosition; set: Function }
   grid: {
     size: number
+    set: Function
     new: Function
   }
   command: { set: Function; run: Function }
 }> = ({ rover, grid, command }) => {
-  // onChange event
-  function onRoverChange(
+  // Common onChange event handler
+  function onChange(
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) {
+    event.preventDefault()
+
     const { name, value } = event.target
 
     switch (name) {
+      case "grid-size":
+        let size = parseInt(value, 10)
+        if (size < 1 || size > 300) return
+        grid.set(size)
+        break
       case "direction":
         // Only continue on valid values for direction
         if (!Object.keys(Direction).includes(value)) return
-
         rover.set({
           ...rover.position,
           direction: Direction[value as keyof typeof Direction],
         })
-
         break
       case "x":
         let x = parseInt(value, 10)
@@ -45,6 +51,8 @@ const Controls: React.FC<{
         command.set(cmd)
         break
     }
+
+    return false
   }
 
   // Transform rover direction to a valid value for the <select>
@@ -56,12 +64,20 @@ const Controls: React.FC<{
 
   return (
     <div className="App-controls">
-      <div className="App-controls__buttons">
-        <button onClick={() => grid.new()}>New grid</button>
-        <button onClick={() => command.run()}>Simulate</button>
-      </div>
-      <form className="App-controls__rover">
+      <form>
         <fieldset>
+          <legend>Grid</legend>
+            <input
+              name="grid-size"
+              type="number"
+              min={1}
+              max={300}
+              value={grid.size}
+              onChange={onChange}
+            />
+          <button type="button" onClick={() => grid.new()}>New ⟳</button>
+        </fieldset>
+        <fieldset className="App-controls__rover">
           <legend>Rover</legend>
           <label>
             X:{" "}
@@ -71,7 +87,7 @@ const Controls: React.FC<{
               min={0}
               max={grid.size - 1}
               value={rover.position.x}
-              onChange={onRoverChange}
+              onChange={onChange}
             />
           </label>
           <label>
@@ -82,12 +98,12 @@ const Controls: React.FC<{
               min={0}
               max={grid.size - 1}
               value={rover.position.y}
-              onChange={onRoverChange}
+              onChange={onChange}
             />
           </label>
           <br />
           <label>Direction</label>
-          <select name="direction" value={direction} onChange={onRoverChange}>
+          <select name="direction" value={direction} onChange={onChange}>
             <option value="N">North</option>
             <option value="E">East</option>
             <option value="S">South</option>
@@ -101,8 +117,9 @@ const Controls: React.FC<{
             name="command"
             autoComplete="off"
             placeholder="Valid instructions: F, R or L"
-            onChange={onRoverChange}
+            onChange={onChange}
           />
+          <button type="button" onClick={() => command.run()}>Run</button>
         </fieldset>
       </form>
     </div>
