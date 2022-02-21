@@ -1,5 +1,5 @@
 import React from "react"
-import { Direction, RoverPosition } from "./App"
+import { Direction, RoverPosition } from "../models/rover"
 import "./Controls.css"
 
 const Controls: React.FC<{

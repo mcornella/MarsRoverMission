@@ -1,7 +1,6 @@
 /* Controls */
 .App-controls {
-  font-size: 2rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   max-width: 500px;
   margin: 0 auto 2rem;
 }
@@ -11,12 +10,11 @@
 }
 
 .App-controls button {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .App-controls input,
 .App-controls select {
   margin: 0.5rem;
-  font-size: 1.5rem;
-  height: 2rem;
+  font-size: 1.25rem;
 }
