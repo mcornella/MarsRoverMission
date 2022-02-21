@@ -22,5 +22,6 @@
   bottom: calc(var(--cell-size) * 1.38);
   border-style: solid;
   border-color: transparent transparent rgba(255, 0, 0, 0.5);
-  border-width: calc(var(--cell-size) / 2) calc(var(--cell-size) / 2) var(--cell-size);
+  border-width: calc(var(--cell-size) / 2) calc(var(--cell-size) / 2)
+    var(--cell-size);
 }

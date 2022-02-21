@@ -1,6 +1,17 @@
 import { RoverPosition } from "./rover"
 
+export type Coordinates = {
+  x: number
+  y: number
+}
+
 export type GridType = boolean[][]
+
+export const isOutOfBounds = (grid: GridType, { x, y }: Coordinates): boolean =>
+  x < 0 || x >= grid.length || y < 0 || y >= grid[0].length
+
+export const hasObstacle = (grid: GridType, { x, y }: Coordinates): boolean =>
+  grid[x][y]
 
 export const randomGrid = ({
   gridSize,
@@ -16,7 +27,7 @@ export const randomGrid = ({
     throw new Error("Obstacle probability must be between 0 and 1")
 
   const newObstacle = (x: number, y: number) =>
-    x != rover.x && y != rover.y && Math.random() < obstacleProbability
+    x !== rover.x && y !== rover.y && Math.random() < obstacleProbability
 
   return Array(gridSize)
     .fill([])

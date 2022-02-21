@@ -1,6 +1,6 @@
 import React from "react"
 
-import { GridType } from "../models/grid"
+import { GridType, hasObstacle } from "../models/grid"
 import { RoverPosition } from "../models/rover"
 
 import "./Grid.css"
@@ -30,13 +30,16 @@ const Grid: React.FC<{ grid: GridType; rover: RoverPosition }> = ({
   return (
     <pre className="App-grid">
       <code>
-        {grid.map((row, i) => (
-          <React.Fragment key={i}>
-            {row.map((isObstacle, j) =>
-              isRover(i, j) ? (
-                <RoverCell key={`${i}-${j}`} {...rover} />
+        {grid.map((row, x) => (
+          <React.Fragment key={x}>
+            {row.map((_, y) =>
+              isRover(x, y) ? (
+                <RoverCell key={`${x}-${y}`} {...rover} />
               ) : (
-                <GridCell key={`${i}-${j}`} isObstacle={isObstacle} />
+                <GridCell
+                  key={`${x}-${y}`}
+                  isObstacle={hasObstacle(grid, { x, y })}
+                />
               )
             )}
             <br />

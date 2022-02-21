@@ -1,4 +1,5 @@
-import { GridType } from "./grid"
+import { Command, isValidCommandSequence } from "./command"
+import { Coordinates, GridType, hasObstacle, isOutOfBounds } from "./grid"
 
 export enum Direction {
   N = 0,
@@ -7,51 +8,97 @@ export enum Direction {
   W = 270,
 }
 
-export type RoverPosition = {
-  x: number
-  y: number
+export type RoverPosition = Coordinates & {
   direction: Direction
 }
 
-export const runCommand = (grid: GridType, rover: RoverPosition, command: string): { position: RoverPosition; error?: Error } => {
-  if (command.length === 0) return {
-    position: rover,
-    error: new Error(`Empty command!`)
-  }
+type Result<K extends string, T> = Record<K, T> & {
+  error?: Error
+}
+type RoverResult = Result<"position", RoverPosition>
 
-  if (/[^FRL]/.test(command)) return {
-    position: rover,
-    error: new Error(`Invalid sequence: ${command}`)
+export const runCommandSequence = (
+  grid: GridType,
+  rover: RoverPosition,
+  sequence: string
+): RoverResult => {
+  if (sequence.length === 0)
+    return {
+      position: rover,
+      error: new Error(`Empty command sequence!`),
+    }
+
+  if (!isValidCommandSequence(sequence)) {
+    return {
+      position: rover,
+      error: new Error(`Invalid sequence: ${sequence}`),
+    }
   }
 
   let position = rover
-  let sequence = command.split("")
-  for (let i = 0; i < sequence.length; i++) {
-    let result = move(grid, position, sequence[i] as 'F' | 'L' | 'R')
+  const commands = sequence.split("") as Command[]
+  for (let i = 0; i < commands.length; i++) {
+    const result = move(grid, position, commands[i])
 
     if (result.error) return result
-    else position = { ...result.position }
+    else position = result.position
   }
 
   return { position }
 }
 
-const move = (grid: GridType, rover: RoverPosition, cmd: 'F' | 'L' | 'R'): { position: RoverPosition; error?: Error } => {
-  let { x, y, direction } = rover
+const move = (
+  grid: GridType,
+  rover: RoverPosition,
+  cmd: Command
+): RoverResult => {
+  const { direction } = rotate(rover, cmd)
+  const { x, y } = moveForward({ ...rover, direction })
 
+  if (isOutOfBounds(grid, { x, y })) {
+    return {
+      position: { ...rover, direction },
+      error: new Error(`Out of bounds at (${x}, ${y})`),
+    }
+  }
+
+  if (hasObstacle(grid, { x, y })) {
+    return {
+      position: { ...rover, direction },
+      error: new Error(`Obstacle encountered at (${x}, ${y})!`),
+    }
+  }
+
+  return {
+    position: { x, y, direction },
+  }
+}
+
+const rotate = (
+  { x, y, direction }: RoverPosition,
+  cmd: Command
+): RoverPosition => {
   switch (cmd) {
-    case "F":
+    case Command.Forward:
       break
-    case "L":
+    case Command.Left:
       direction = direction - 90
       if (direction < 0) direction += 360
       break
-    case "R":
+    case Command.Right:
       direction = (direction + 90) % 360
       if (direction >= 360) direction -= 360
       break
   }
 
+  return {
+    x,
+    y,
+    direction,
+  }
+}
+
+const moveForward = ({ x, y, direction }: RoverPosition): RoverPosition => {
   switch (direction) {
     case Direction.N:
       x--
@@ -67,21 +114,9 @@ const move = (grid: GridType, rover: RoverPosition, cmd: 'F' | 'L' | 'R'): { pos
       break
   }
 
-  if (x < 0 || x >= grid.length || y < 0 || y >= grid.length) {
-    return {
-      position: { ...rover, direction },
-      error: new Error(`Out of bounds at (${x}, ${y})`),
-    }
-  }
-
-  if (grid[x][y]) {
-    return {
-      position: { ...rover, direction },
-      error: new Error(`Obstacle encountered at (${x}, ${y})!`),
-    }
-  }
-
   return {
-    position: { x, y, direction },
+    x,
+    y,
+    direction,
   }
 }

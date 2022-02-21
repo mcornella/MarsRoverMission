@@ -1,5 +1,8 @@
 import React from "react"
+
+import { createCommandSequence } from "../models/command"
 import { Direction, RoverPosition } from "../models/rover"
+
 import "./Controls.css"
 
 const Controls: React.FC<{
@@ -9,8 +12,8 @@ const Controls: React.FC<{
     set: Function
     new: Function
   }
-  command: { set: Function; run: Function }
-}> = ({ rover, grid, command }) => {
+  sequence: { set: Function; run: Function }
+}> = ({ rover, grid, sequence }) => {
   // Common onChange event handler
   function onChange(
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -20,12 +23,13 @@ const Controls: React.FC<{
     const { name, value } = event.target
 
     switch (name) {
-      case "grid-size":
-        let size = parseInt(value, 10)
+      case "grid-size": {
+        const size = parseInt(value, 10)
         if (size < 1 || size > 300) return
         grid.set(size)
         break
-      case "direction":
+      }
+      case "direction": {
         // Only continue on valid values for direction
         if (!Object.keys(Direction).includes(value)) return
         rover.set({
@@ -33,23 +37,27 @@ const Controls: React.FC<{
           direction: Direction[value as keyof typeof Direction],
         })
         break
-      case "x":
-        let x = parseInt(value, 10)
+      }
+      case "x": {
+        const x = parseInt(value, 10)
         if (x < 0 || x >= grid.size) return
         rover.set({ ...rover.position, x })
         break
-      case "y":
-        let y = parseInt(value, 10)
+      }
+      case "y": {
+        const y = parseInt(value, 10)
         if (y < 0 || y >= grid.size) return
         rover.set({ ...rover.position, y })
         break
-      case "command":
+      }
+      case "sequence": {
         // Remove invalid characters from input value
-        let cmd = value.toUpperCase().replaceAll(/[^FRL]/g, "")
+        const cmd = createCommandSequence(value)
         // Rewrite input value with valid command
         event.target.value = cmd
-        command.set(cmd)
+        sequence.set(cmd)
         break
+      }
     }
 
     return false
@@ -67,15 +75,17 @@ const Controls: React.FC<{
       <form>
         <fieldset>
           <legend>Grid</legend>
-            <input
-              name="grid-size"
-              type="number"
-              min={1}
-              max={300}
-              value={grid.size}
-              onChange={onChange}
-            />
-          <button type="button" onClick={() => grid.new()}>New ⟳</button>
+          <input
+            name="grid-size"
+            type="number"
+            min={1}
+            max={300}
+            value={grid.size}
+            onChange={onChange}
+          />
+          <button type="button" onClick={() => grid.new()}>
+            New
+          </button>
         </fieldset>
         <fieldset className="App-controls__rover">
           <legend>Rover</legend>
@@ -101,7 +111,6 @@ const Controls: React.FC<{
               onChange={onChange}
             />
           </label>
-          <br />
           <label>Direction</label>
           <select name="direction" value={direction} onChange={onChange}>
             <option value="N">North</option>
@@ -114,12 +123,14 @@ const Controls: React.FC<{
           <legend>Command</legend>
           <input
             type="text"
-            name="command"
+            name="sequence"
             autoComplete="off"
             placeholder="Valid instructions: F, R or L"
             onChange={onChange}
           />
-          <button type="button" onClick={() => command.run()}>Run</button>
+          <button type="button" onClick={() => sequence.run()}>
+            Run
+          </button>
         </fieldset>
       </form>
     </div>

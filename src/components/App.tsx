@@ -1,7 +1,11 @@
 import React, { useState } from "react"
 
-import { Direction, runCommand } from "../models/rover"
+import {
+  createCommandSequence,
+  isValidCommandSequence,
+} from "../models/command"
 import { randomGrid } from "../models/grid"
+import { Direction, runCommandSequence } from "../models/rover"
 
 import Controls from "./Controls"
 import Grid from "./Grid"
@@ -9,27 +13,23 @@ import "./App.css"
 
 const App: React.FC<{}> = () => {
   const [gridSize, setGridSize] = useState(10)
-  const [rover, setRover] = useState({
-    x: 5,
-    y: 5,
-    direction: Direction.N,
-  })
-  const [command, setCommand] = useState("")
+  const [rover, setRover] = useState({ x: 5, y: 5, direction: Direction.N })
+  const [sequence, setCommandSequence] = useState("")
   const [grid, setGrid] = useState(randomGrid({ gridSize, rover }))
 
   function simulate() {
-    if (command.length === 0) return
-    if (/[^FRL]/.test(command)) return
+    if (sequence.length === 0) return
+    if (!isValidCommandSequence(sequence)) return
 
     // Run command and get position and possible error
-    let { position, error } = runCommand(grid, rover, command)
+    const { position, error } = runCommandSequence(grid, rover, sequence)
 
     // Update rover position
     setRover(position)
 
     // If an error was returned, show it after React has finished rendering
-    if (typeof error !== 'undefined') {
-      setTimeout(() => alert(error?.message), 0)
+    if (error) {
+      setTimeout(() => alert(error.message), 0)
     }
   }
 
@@ -37,7 +37,7 @@ const App: React.FC<{}> = () => {
     <div className="App">
       <Controls
         rover={{ position: rover, set: setRover }}
-        command={{ set: setCommand, run: simulate }}
+        sequence={{ set: setCommandSequence, run: simulate }}
         grid={{
           size: gridSize,
           set: setGridSize,
