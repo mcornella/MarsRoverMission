@@ -6,7 +6,7 @@ import { RoverPosition } from "../models/rover"
 import "./Grid.css"
 
 const GridCell: React.FC<{ isObstacle: boolean }> = ({ isObstacle }) => {
-  return isObstacle ? <span>⬛</span> : <span>⬜</span>
+  return isObstacle ? <span>🪨</span> : <span>⬜</span>
 }
 
 const RoverCell: React.FC<RoverPosition> = ({ x, y, direction }) => {
