@@ -6,7 +6,9 @@ import { GridType, hasObstacle, randomGrid } from "../models/grid"
 import { Direction, RoverPosition, runCommandSequence } from "../models/rover"
 
 import Controls from "./Controls"
+import ErrorPrompt from "./ErrorPrompt"
 import Grid from "./Grid"
+
 import "./App.css"
 
 const App: React.FC<{}> = () => {
@@ -19,6 +21,7 @@ const App: React.FC<{}> = () => {
   const [sequence, setCommandSequence] = useState("")
   const [grid, setGrid] = useState<GridType>(randomGrid({ gridSize, rover }))
   const [futurePath, setFuturePath] = useState<RoverPosition[]>([])
+  const [error, setError] = useState<Error | null>(null)
 
   function simulate() {
     setCommandSequence("")
@@ -35,23 +38,23 @@ const App: React.FC<{}> = () => {
 
     // If an error was returned, show it after React has finished rendering
     if (error) {
-      setTimeout(() => alert(error.message), 0)
+      setError(error)
     }
   }
 
   useEffect(() => {
+    // Check if the computed future path is longer than the command sequence
+    if (sequence.length < futurePath.length) {
+      setFuturePath(futurePath.slice(0, sequence.length))
+      return
+    }
+
     if (sequence.length === 0) return
     if (!isValidCommandSequence(sequence)) return
 
     // Get previous future rover position or current rover position
     const lastFuturePosition =
       futurePath.length > 0 ? futurePath[futurePath.length - 1] : rover
-
-    // Check if the computed future path is longer than the command sequence
-    if (sequence.length < futurePath.length) {
-      setFuturePath(futurePath.slice(0, sequence.length))
-      return
-    }
 
     // Check if last position is in an obstacle: if it is, stop future path
     if (hasObstacle(grid, lastFuturePosition)) {
@@ -78,6 +81,7 @@ const App: React.FC<{}> = () => {
 
   return (
     <div className="App">
+      <ErrorPrompt error={error} clear={() => setError(null)} />
       <Controls
         rover={{ position: rover, set: setRover }}
         sequence={{ value: sequence, set: setCommandSequence, run: simulate }}

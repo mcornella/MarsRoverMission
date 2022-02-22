@@ -2,16 +2,12 @@ import { setUncaughtExceptionCaptureCallback } from "process"
 import { RoverPosition } from "./rover"
 
 class ErrorWithPosition extends Error {
-  private _position: RoverPosition
+  position: RoverPosition
 
   constructor(message: string, position: RoverPosition) {
     super(message)
     this.name = "ErrorWithPosition"
-    this._position = position
-  }
-
-  get position() {
-    return this._position
+    this.position = position
   }
 }
 

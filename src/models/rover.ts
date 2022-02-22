@@ -85,14 +85,12 @@ const rotate = (
   cmd: Command
 ): RoverPosition => {
   switch (cmd) {
-    case Command.Forward:
-      break
     case Command.Left:
       direction = direction - 90
       if (direction < 0) direction += 360
       break
     case Command.Right:
-      direction = (direction + 90) % 360
+      direction = direction + 90
       if (direction >= 360) direction -= 360
       break
   }
