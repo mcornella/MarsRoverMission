@@ -1,4 +1,10 @@
 import { Command, isValidCommandSequence } from "./command"
+import {
+  EmptyCommandSequenceError,
+  InvalidCommandSequenceError,
+  ObstacleEncounteredError,
+  OutOfBoundsError,
+} from "./error"
 import { Coordinates, GridType, hasObstacle, isOutOfBounds } from "./grid"
 
 export enum Direction {
@@ -25,13 +31,13 @@ export const runCommandSequence = (
   if (sequence.length === 0)
     return {
       position: rover,
-      error: new Error(`Empty command sequence!`),
+      error: new EmptyCommandSequenceError(),
     }
 
   if (!isValidCommandSequence(sequence)) {
     return {
       position: rover,
-      error: new Error(`Invalid sequence: ${sequence}`),
+      error: new InvalidCommandSequenceError(sequence),
     }
   }
 
@@ -58,14 +64,14 @@ const move = (
   if (isOutOfBounds(grid, { x, y })) {
     return {
       position: { ...rover, direction },
-      error: new Error(`Out of bounds at (${x}, ${y})`),
+      error: new OutOfBoundsError({ x, y, direction }),
     }
   }
 
   if (hasObstacle(grid, { x, y })) {
     return {
       position: { ...rover, direction },
-      error: new Error(`Obstacle encountered at (${x}, ${y})!`),
+      error: new ObstacleEncounteredError({ x, y, direction }),
     }
   }
 

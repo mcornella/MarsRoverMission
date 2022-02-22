@@ -1,6 +1,12 @@
 import { assert, describe, expect, it } from "vitest"
 
 import { Command } from "./command"
+import {
+  EmptyCommandSequenceError,
+  InvalidCommandSequenceError,
+  ObstacleEncounteredError,
+  OutOfBoundsError,
+} from "./error"
 import { hasObstacle } from "./grid"
 import { Direction, runCommandSequence } from "./rover"
 
@@ -15,13 +21,13 @@ describe("Command runner", () => {
   it("Shows error on empty command", () => {
     const command = ""
     const { error } = runCommandSequence(grid, rover, command)
-    expect(error).not.toBeUndefined()
+    expect(error).toBeInstanceOf(EmptyCommandSequenceError)
   })
 
   it("Shows error on invalid command", () => {
     const command = "ABCD"
     const { error } = runCommandSequence(grid, rover, command)
-    expect(error).not.toBeUndefined()
+    expect(error).toBeInstanceOf(InvalidCommandSequenceError)
   })
 
   it("Shows error on moving outside grid", () => {
@@ -46,7 +52,7 @@ describe("Command runner", () => {
         },
         command
       )
-      expect(error).not.toBeUndefined()
+      expect(error).toBeInstanceOf(OutOfBoundsError)
     }
   })
 
@@ -71,7 +77,7 @@ describe("Command runner", () => {
     assert(hasObstacle(grid, { x: 0, y: 1 }))
 
     const { error } = runCommandSequence(grid, rover, command)
-    expect(error).not.toBeUndefined()
+    expect(error).toBeInstanceOf(ObstacleEncounteredError)
   })
 
   it("Shows error on moving to a cell with an obstacle with updated direction", () => {

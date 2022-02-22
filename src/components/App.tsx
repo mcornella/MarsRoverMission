@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react"
 
 import { isValidCommandSequence } from "../models/command"
-import { GridType, randomGrid } from "../models/grid"
+import { ObstacleEncounteredError } from "../models/error"
+import { GridType, hasObstacle, randomGrid } from "../models/grid"
 import { Direction, RoverPosition, runCommandSequence } from "../models/rover"
 
 import Controls from "./Controls"
@@ -20,6 +21,9 @@ const App: React.FC<{}> = () => {
   const [futurePath, setFuturePath] = useState<RoverPosition[]>([])
 
   function simulate() {
+    setCommandSequence("")
+    setFuturePath([])
+
     if (sequence.length === 0) return
     if (!isValidCommandSequence(sequence)) return
 
@@ -33,9 +37,6 @@ const App: React.FC<{}> = () => {
     if (error) {
       setTimeout(() => alert(error.message), 0)
     }
-
-    setCommandSequence("")
-    setFuturePath([])
   }
 
   useEffect(() => {
@@ -52,6 +53,11 @@ const App: React.FC<{}> = () => {
       return
     }
 
+    // Check if last position is in an obstacle: if it is, stop future path
+    if (hasObstacle(grid, lastFuturePosition)) {
+      return
+    }
+
     // Run command and get position and possible error
     const { position, error } = runCommandSequence(
       grid,
@@ -61,14 +67,8 @@ const App: React.FC<{}> = () => {
 
     // If there was an obstacle get the obstacle position
     if (error) {
-      if (error.message.startsWith("Obstacle encountered")) {
-        const [x, y] = error.message
-          .match(/\((\d+), (\d+)\)/)!
-          .slice(1)
-          .map((s) => parseInt(s, 10))
-        setFuturePath(
-          futurePath.concat([{ x, y, direction: lastFuturePosition.direction }])
-        )
+      if (error instanceof ObstacleEncounteredError) {
+        setFuturePath(futurePath.concat([error.position]))
       }
       return
     }
