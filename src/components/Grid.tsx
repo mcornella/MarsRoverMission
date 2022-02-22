@@ -5,8 +5,17 @@ import { RoverPosition } from "../models/rover"
 
 import "./Grid.css"
 
-const GridCell: React.FC<{ isObstacle: boolean }> = ({ isObstacle }) => {
-  return isObstacle ? <span>🪨</span> : <span>⬜</span>
+const GridCell: React.FC<{ isObstacle: boolean; willBeVisited: boolean }> = ({
+  isObstacle,
+  willBeVisited,
+}) => {
+  return isObstacle ? (
+    <span data-obstacle data-future-visit={willBeVisited || null}>
+      🪨
+    </span>
+  ) : (
+    <span data-future-visit={willBeVisited || null}>⬜</span>
+  )
 }
 
 const RoverCell: React.FC<RoverPosition> = ({ x, y, direction }) => {
@@ -22,11 +31,14 @@ const RoverCell: React.FC<RoverPosition> = ({ x, y, direction }) => {
   )
 }
 
-const Grid: React.FC<{ grid: GridType; rover: RoverPosition }> = ({
-  grid,
-  rover,
-}) => {
+const Grid: React.FC<{
+  grid: GridType
+  rover: RoverPosition
+  futurePath: RoverPosition[]
+}> = ({ grid, rover, futurePath }) => {
   const isRover = (x: number, y: number) => x === rover.x && y === rover.y
+  const willBeVisited = (x: number, y: number) =>
+    futurePath.some((f) => f.x === x && f.y === y)
   return (
     <pre className="App-grid">
       <code>
@@ -39,6 +51,7 @@ const Grid: React.FC<{ grid: GridType; rover: RoverPosition }> = ({
                 <GridCell
                   key={`${x}-${y}`}
                   isObstacle={hasObstacle(grid, { x, y })}
+                  willBeVisited={willBeVisited(x, y)}
                 />
               )
             )}
