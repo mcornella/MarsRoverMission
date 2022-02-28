@@ -18,19 +18,33 @@ describe("Command runner", () => {
     direction: Direction.E,
   }
 
-  it("Shows error on empty command", () => {
+  it("Returns error on empty command", () => {
     const command = ""
     const { error } = runCommandSequence(grid, rover, command)
     expect(error).toBeInstanceOf(EmptyCommandSequenceError)
   })
 
-  it("Shows error on invalid command", () => {
+  it("Returns error on invalid command", () => {
     const command = "ABCD"
     const { error } = runCommandSequence(grid, rover, command)
     expect(error).toBeInstanceOf(InvalidCommandSequenceError)
   })
 
-  it("Shows error on moving outside grid", () => {
+  it("Returns error when starting position is out of bounds", () => {
+    const grid = [[false]]
+    const rover = { x: -1, y: -1, direction: Direction.E }
+    const { error } = runCommandSequence(grid, rover, Command.Forward)
+    expect(error).toBeInstanceOf(OutOfBoundsError)
+  })
+
+  it("Returns error when starting position is an obstacle", () => {
+    const grid = [[true]]
+    const rover = { x: 0, y: 0, direction: Direction.E }
+    const { error } = runCommandSequence(grid, rover, Command.Forward)
+    expect(error).toBeInstanceOf(ObstacleEncounteredError)
+  })
+
+  it("Returns error on moving outside grid", () => {
     const command = Command.Forward
 
     // Assert that a Forward command will move outside the grid
@@ -56,7 +70,7 @@ describe("Command runner", () => {
     }
   })
 
-  it("Shows error on moving to a cell with an obstacle", () => {
+  it("Returns error on moving to a cell with an obstacle", () => {
     const grid = [
       [false, true],
       [false, false],
@@ -80,7 +94,7 @@ describe("Command runner", () => {
     expect(error).toBeInstanceOf(ObstacleEncounteredError)
   })
 
-  it("Shows error on moving to a cell with an obstacle with updated direction", () => {
+  it("Returns error on moving to a cell with an obstacle with updated direction", () => {
     const grid = [
       [false, true],
       [false, false],
@@ -171,5 +185,41 @@ describe("Command runner", () => {
       x: rover.x - 1,
       direction: Direction.N,
     })
+  })
+
+  it("Rotates correctly from North to West", () => {
+    const grid = [
+      [false, false],
+      [false, false],
+    ]
+
+    const rover = {
+      x: 1,
+      y: 1,
+      direction: Direction.N,
+    }
+
+    const command = Command.Left
+
+    const { position } = runCommandSequence(grid, rover, command)
+    expect(position.direction).toBe(Direction.W)
+  })
+
+  it("Rotates correctly from West to North", () => {
+    const grid = [
+      [false, false],
+      [false, false],
+    ]
+
+    const rover = {
+      x: 1,
+      y: 1,
+      direction: Direction.W,
+    }
+
+    const command = Command.Right
+
+    const { position } = runCommandSequence(grid, rover, command)
+    expect(position.direction).toBe(Direction.N)
   })
 })
