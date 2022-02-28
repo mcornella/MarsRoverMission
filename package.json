@@ -6,8 +6,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "fix": "eslint --fix .",
+    "lint": "eslint --ext ts,tsx,js,json .",
+    "fix": "npm run lint -- --fix",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
