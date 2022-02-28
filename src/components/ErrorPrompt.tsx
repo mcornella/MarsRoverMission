@@ -3,7 +3,7 @@ import { ObstacleEncounteredError, OutOfBoundsError } from "../models/error"
 
 import "./ErrorPrompt.css"
 
-const ErrorPrompt: React.FC<{ error: Error | null; clear: Function }> = ({
+const ErrorPrompt: React.FC<{ error?: Error; clear: Function }> = ({
   error,
   clear,
 }) => {
