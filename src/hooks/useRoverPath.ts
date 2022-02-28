@@ -30,7 +30,7 @@ const useRoverPath = (
     // Get last path result, including error status, or start with current rover position
     const lastResult = roverPathResult.slice(-1)[0] || { position: rover }
 
-    // If the last rover path resulted in an error, do not add run any more commands
+    // If the last rover path resulted in an error, do not run any more commands
     if (lastResult.error) return
 
     // Run command and get position and possible error

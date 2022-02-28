@@ -55,7 +55,7 @@ const Controls: React.FC<{
       },
     }
 
-    if (Object.hasOwn(handler, name)) handler[name]()
+    if (handler.hasOwnProperty(name)) handler[name]()
   }
 
   // Convert Arrow key presses to valid commands and react run sequence on Enter
@@ -75,7 +75,7 @@ const Controls: React.FC<{
       },
     }
 
-    if (!Object.hasOwn(keyHandler, event.key)) return
+    if (!keyHandler.hasOwnProperty(event.key)) return
 
     keyHandler[event.key]()
     event.preventDefault()
