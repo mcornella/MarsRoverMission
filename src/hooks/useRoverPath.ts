@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { isValidCommandSequence } from "../models/command"
+import { ErrorWithPosition } from "../models/error"
 import { GridType } from "../models/grid"
 import { RoverPosition, RoverResult, runCommandSequence } from "../models/rover"
 
@@ -8,14 +9,17 @@ const useRoverPath = (
   rover: RoverPosition,
   grid: GridType,
   sequence: string
-): [RoverResult[], () => void] => {
-  const [roverPath, setRoverPath] = useState<RoverResult[]>([])
-  const clearRoverPath = () => setRoverPath([])
+): [RoverPosition[], VoidFunction] => {
+  const [roverPathResult, setRoverPathResult] = useState<RoverResult[]>([])
 
+  const roverPath = roverPathResult.map(({ position }) => position)
+  const clearRoverPath = () => setRoverPathResult([])
+
+  // Run this when sequence changes
   useEffect(() => {
-    // Check if the computed path is longer than the command sequence
-    if (sequence.length < roverPath.length) {
-      setRoverPath(roverPath.slice(0, sequence.length))
+    // If the command sequence has been shortened, trim the computed path
+    if (sequence.length < roverPathResult.length) {
+      setRoverPathResult(roverPathResult.slice(0, sequence.length))
       return
     }
 
@@ -23,39 +27,27 @@ const useRoverPath = (
     if (sequence.length === 0) return
     if (!isValidCommandSequence(sequence)) return
 
-    // Get last path position or start from current rover position
-    const lastPathResult =
-      roverPath.length > 0
-        ? roverPath[roverPath.length - 1]
-        : { position: rover }
+    // Get last path result, including error status, or start with current rover position
+    const lastResult = roverPathResult.slice(-1)[0] || { position: rover }
 
     // If the last rover path resulted in an error, do not add run any more commands
-    if (lastPathResult.error) {
-      return
-    }
-
-    // Get last position or current rover position
-    const lastPathPosition = lastPathResult.position
+    if (lastResult.error) return
 
     // Run command and get position and possible error
     const { position, error } = runCommandSequence(
       grid,
-      lastPathPosition,
+      lastResult.position,
       sequence[sequence.length - 1]
     )
 
-    // If there was an obstacle get the obstacle position
-    if (error) {
-      setRoverPath(
-        roverPath.concat({
-          error,
-          position: "position" in error ? error.position : position,
-        })
-      )
-      return
+    // If an error was returned with a position (OutOfBounds, ObstacleEncountered),
+    // use the position returned in the error.
+    const result: RoverResult = {
+      position: error instanceof ErrorWithPosition ? error.position : position,
+      error,
     }
 
-    setRoverPath(roverPath.concat({ position }))
+    setRoverPathResult(roverPathResult.concat(result))
   }, [sequence])
 
   return [roverPath, clearRoverPath]

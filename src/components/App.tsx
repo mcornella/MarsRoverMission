@@ -54,11 +54,7 @@ const App: React.FC<{}> = () => {
           new: () => setGrid(randomGrid({ gridSize, rover })),
         }}
       />
-      <Grid
-        grid={grid}
-        rover={rover}
-        futurePath={futurePath.map(({ position }) => position)}
-      />
+      <Grid grid={grid} rover={rover} futurePath={futurePath} />
     </div>
   )
 }
