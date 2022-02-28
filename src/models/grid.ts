@@ -11,7 +11,7 @@ export const isOutOfBounds = (grid: GridType, { x, y }: Coordinates): boolean =>
   x < 0 || x >= grid.length || y < 0 || y >= grid[0].length
 
 export const hasObstacle = (grid: GridType, { x, y }: Coordinates): boolean =>
-  grid[x][y]
+  !isOutOfBounds(grid, { x, y }) && grid[x][y]
 
 export const randomGrid = ({
   gridSize,
@@ -22,9 +22,13 @@ export const randomGrid = ({
   rover: RoverPosition
   obstacleProbability?: number
 }): GridType => {
-  if (gridSize < 1) throw new Error("Grid size must be greater than 0")
-  if (obstacleProbability < 0 || obstacleProbability >= 1)
-    throw new Error("Obstacle probability must be between 0 and 1")
+  if (gridSize < 1)
+    throw new Error(`Expected grid size greater than 0. Got: ${gridSize}`)
+
+  if (obstacleProbability < 0 || obstacleProbability > 1)
+    throw new Error(
+      `Expected obstacle probability between 0 and 1. Got: ${obstacleProbability}`
+    )
 
   const newObstacle = (x: number, y: number) =>
     x !== rover.x && y !== rover.y && Math.random() < obstacleProbability
