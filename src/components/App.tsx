@@ -28,6 +28,7 @@ const App: React.FC<{}> = () => {
     setCommandSequence("")
     clearFuturePath()
 
+    // Don't run the Command Sequence if it's empty or invalid
     if (sequence.length === 0) return
     if (!isValidCommandSequence(sequence)) return
 
@@ -38,9 +39,7 @@ const App: React.FC<{}> = () => {
     setRover(position)
 
     // If an error was returned, show it after React has finished rendering
-    if (error) {
-      setError(error)
-    }
+    if (error) setError(error)
   }
 
   return (
