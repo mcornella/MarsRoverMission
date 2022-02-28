@@ -1,6 +1,6 @@
 import React from "react"
 
-import { createCommandSequence } from "../models/command"
+import { Command, createCommandSequence } from "../models/command"
 import { Direction, RoverPosition } from "../models/rover"
 
 import "./Controls.css"
@@ -14,74 +14,70 @@ const Controls: React.FC<{
   }
   sequence: { value: string; set: Function; run: Function }
 }> = ({ rover, grid, sequence }) => {
-  // Common onChange event handler
-  function onChange(
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) {
+  // Common onChange event handler for form inputs
+  const onChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLSelectElement
+  > = (event) => {
     event.preventDefault()
 
     const { name, value } = event.target
 
-    switch (name) {
-      case "grid-size": {
+    const handler: Record<string, Function> = {
+      "grid-size": () => {
         const size = parseInt(value, 10)
         if (size < 1 || size > 300) return
         grid.set(size)
-        break
-      }
-      case "direction": {
+      },
+      direction: () => {
         // Only continue on valid values for direction
         if (!Object.keys(Direction).includes(value)) return
         rover.set({
           ...rover.position,
           direction: Direction[value as keyof typeof Direction],
         })
-        break
-      }
-      case "x": {
+      },
+      x: () => {
         const x = parseInt(value, 10)
         if (x < 0 || x >= grid.size) return
         rover.set({ ...rover.position, x })
-        break
-      }
-      case "y": {
+      },
+      y: () => {
         const y = parseInt(value, 10)
         if (y < 0 || y >= grid.size) return
         rover.set({ ...rover.position, y })
-        break
-      }
-      case "sequence": {
+      },
+      sequence: () => {
         // Remove invalid characters from input value
         const cmd = createCommandSequence(value)
         // Rewrite input value with valid command
         event.target.value = cmd
         sequence.set(cmd)
-        break
-      }
+      },
     }
 
-    return false
+    if (Object.hasOwn(handler, name)) handler[name]()
   }
 
-  // Convert Arrow key presses to valid commands
-  function onCommandSequenceKeyDown(event: React.KeyboardEvent) {
-    switch (event.key) {
-      case "Enter":
+  // Convert Arrow key presses to valid commands and react run sequence on Enter
+  const onCommandSequenceKeyDown: React.KeyboardEventHandler = (event) => {
+    const keyHandler: Record<typeof event.key, Function> = {
+      Enter() {
         sequence.run()
-        break
-      case "ArrowUp":
-        sequence.set(sequence.value + "F")
-        break
-      case "ArrowLeft":
-        sequence.set(sequence.value + "L")
-        break
-      case "ArrowRight":
-        sequence.set(sequence.value + "R")
-        break
-      default:
-        return
+      },
+      ArrowUp() {
+        sequence.set(sequence.value + Command.Forward)
+      },
+      ArrowLeft() {
+        sequence.set(sequence.value + Command.Left)
+      },
+      ArrowRight() {
+        sequence.set(sequence.value + Command.Right)
+      },
     }
 
+    if (!Object.hasOwn(keyHandler, event.key)) return
+
+    keyHandler[event.key]()
     event.preventDefault()
   }
 

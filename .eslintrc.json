@@ -19,5 +19,7 @@
   },
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
+    "complexity": ["warn", 8],
+    "semi": ["error", "never"]
   }
 }
