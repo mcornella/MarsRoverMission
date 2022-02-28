@@ -8,15 +8,15 @@ import {
 } from "./error"
 import { Coordinates, GridType, hasObstacle, isOutOfBounds } from "./grid"
 
-export enum Direction {
-  N = 0,
-  E = 90,
-  S = 180,
-  W = 270,
+export const Direction = {
+  North: 0,
+  East: 90,
+  South: 180,
+  West: 270,
 }
 
 export type RoverPosition = Coordinates & {
-  direction: Direction
+  direction: typeof Direction[keyof typeof Direction]
 }
 
 type Result<K extends string, T> = Record<K, T> & {
@@ -123,16 +123,16 @@ const rotate = (
 
 const moveForward = ({ x, y, direction }: RoverPosition): RoverPosition => {
   switch (direction) {
-    case Direction.N:
+    case Direction.North:
       x--
       break
-    case Direction.S:
+    case Direction.South:
       x++
       break
-    case Direction.W:
+    case Direction.West:
       y--
       break
-    case Direction.E:
+    case Direction.East:
       y++
       break
   }

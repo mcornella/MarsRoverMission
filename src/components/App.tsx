@@ -17,7 +17,7 @@ const App: React.FC<{}> = () => {
   const [rover, setRover] = useState<RoverPosition>({
     x: 5,
     y: 5,
-    direction: Direction.N,
+    direction: Direction.North,
   })
   const [sequence, setCommandSequence] = useState("")
   const [grid, setGrid] = useState<GridType>(randomGrid({ gridSize, rover }))

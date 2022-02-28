@@ -15,7 +15,7 @@ describe("Command runner", () => {
   const rover = {
     x: 0,
     y: 0,
-    direction: Direction.E,
+    direction: Direction.East,
   }
 
   it("Returns error on empty command", () => {
@@ -32,14 +32,14 @@ describe("Command runner", () => {
 
   it("Returns error when starting position is out of bounds", () => {
     const grid = [[false]]
-    const rover = { x: -1, y: -1, direction: Direction.E }
+    const rover = { x: -1, y: -1, direction: Direction.East }
     const { error } = runCommandSequence(grid, rover, Command.Forward)
     expect(error).toBeInstanceOf(OutOfBoundsError)
   })
 
   it("Returns error when starting position is an obstacle", () => {
     const grid = [[true]]
-    const rover = { x: 0, y: 0, direction: Direction.E }
+    const rover = { x: 0, y: 0, direction: Direction.East }
     const { error } = runCommandSequence(grid, rover, Command.Forward)
     expect(error).toBeInstanceOf(ObstacleEncounteredError)
   })
@@ -51,12 +51,7 @@ describe("Command runner", () => {
     assert(grid.length === 1)
 
     // Moving in any direction outside the grid should result in an error
-    for (const direction of [
-      Direction.N,
-      Direction.S,
-      Direction.W,
-      Direction.E,
-    ]) {
+    for (const direction of Object.values(Direction)) {
       const { error } = runCommandSequence(
         grid,
         {
@@ -79,7 +74,7 @@ describe("Command runner", () => {
     const rover = {
       x: 0,
       y: 0,
-      direction: Direction.E,
+      direction: Direction.East,
     }
 
     const command = Command.Forward
@@ -87,7 +82,7 @@ describe("Command runner", () => {
     // Assert that a Forward command will move to an obstacle
     assert(rover.x === 0)
     assert(rover.y === 0)
-    assert(rover.direction === Direction.E)
+    assert(rover.direction === Direction.East)
     assert(hasObstacle(grid, { x: 0, y: 1 }))
 
     const { error } = runCommandSequence(grid, rover, command)
@@ -103,7 +98,7 @@ describe("Command runner", () => {
     const rover = {
       x: 0,
       y: 0,
-      direction: Direction.N,
+      direction: Direction.North,
     }
 
     const command = Command.Right
@@ -111,12 +106,12 @@ describe("Command runner", () => {
     // Assert that a Right command will move to an obstacle
     assert(rover.x === 0)
     assert(rover.y === 0)
-    assert(rover.direction === Direction.N)
+    assert(rover.direction === Direction.North)
     assert(hasObstacle(grid, { x: 0, y: 1 }))
 
     const { position, error } = runCommandSequence(grid, rover, command)
     expect(error).not.toBeUndefined()
-    expect(position.direction).toBe(Direction.E)
+    expect(position.direction).toBe(Direction.East)
   })
 
   it("Moves forward 1 cell on Forward", () => {
@@ -128,7 +123,7 @@ describe("Command runner", () => {
     const rover = {
       x: 0,
       y: 0,
-      direction: Direction.S,
+      direction: Direction.South,
     }
 
     const command = Command.Forward
@@ -150,7 +145,7 @@ describe("Command runner", () => {
     const rover = {
       x: 0,
       y: 0,
-      direction: Direction.E,
+      direction: Direction.East,
     }
 
     const command = Command.Right
@@ -160,7 +155,7 @@ describe("Command runner", () => {
     expect(position).toMatchObject({
       ...rover,
       x: rover.x + 1,
-      direction: Direction.S,
+      direction: Direction.South,
     })
   })
 
@@ -173,7 +168,7 @@ describe("Command runner", () => {
     const rover = {
       x: 1,
       y: 0,
-      direction: Direction.E,
+      direction: Direction.East,
     }
 
     const command = Command.Left
@@ -183,7 +178,7 @@ describe("Command runner", () => {
     expect(position).toMatchObject({
       ...rover,
       x: rover.x - 1,
-      direction: Direction.N,
+      direction: Direction.North,
     })
   })
 
@@ -196,13 +191,13 @@ describe("Command runner", () => {
     const rover = {
       x: 1,
       y: 1,
-      direction: Direction.N,
+      direction: Direction.North,
     }
 
     const command = Command.Left
 
     const { position } = runCommandSequence(grid, rover, command)
-    expect(position.direction).toBe(Direction.W)
+    expect(position.direction).toBe(Direction.West)
   })
 
   it("Rotates correctly from West to North", () => {
@@ -214,12 +209,12 @@ describe("Command runner", () => {
     const rover = {
       x: 1,
       y: 1,
-      direction: Direction.W,
+      direction: Direction.West,
     }
 
     const command = Command.Right
 
     const { position } = runCommandSequence(grid, rover, command)
-    expect(position.direction).toBe(Direction.N)
+    expect(position.direction).toBe(Direction.North)
   })
 })

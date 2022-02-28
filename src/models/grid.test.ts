@@ -41,7 +41,7 @@ describe("Grid checks", () => {
 
 describe("Random grid creation", () => {
   it("Returns an error creating a grid of invalid size", () => {
-    const rover: RoverPosition = { x: 0, y: 0, direction: Direction.N }
+    const rover: RoverPosition = { x: 0, y: 0, direction: Direction.North }
 
     expect(() => randomGrid({ rover, gridSize: 0 })).toThrowError()
     expect(() => randomGrid({ rover, gridSize: -1 })).toThrowError()
@@ -50,7 +50,7 @@ describe("Random grid creation", () => {
   it("Returns an error creating a grid with invalid obstacle probability", () => {
     const args = {
       gridSize: 1,
-      rover: { x: 0, y: 0, direction: Direction.N },
+      rover: { x: 0, y: 0, direction: Direction.North },
     }
 
     for (const obstacleProbability of [-1, 1.000001, 2]) {
@@ -61,7 +61,7 @@ describe("Random grid creation", () => {
   it("Does not return an error creating a grid with valid obstacle probability", () => {
     const args = {
       gridSize: 1,
-      rover: { x: 0, y: 0, direction: Direction.N },
+      rover: { x: 0, y: 0, direction: Direction.North },
     }
 
     for (const obstacleProbability of [0, 1]) {
@@ -75,7 +75,7 @@ describe("Random grid creation", () => {
     const gridSize = 3
     const grid = randomGrid({
       gridSize,
-      rover: { x: 0, y: 0, direction: Direction.N },
+      rover: { x: 0, y: 0, direction: Direction.North },
     })
     expect(grid.length).toBe(gridSize)
     expect(grid.every((row) => row.length === gridSize)).toBe(true)
@@ -85,7 +85,7 @@ describe("Random grid creation", () => {
     const expectedGrid: GridType = [[false]]
     const grid = randomGrid({
       gridSize: 1,
-      rover: { x: -1, y: -1, direction: Direction.N },
+      rover: { x: -1, y: -1, direction: Direction.North },
       obstacleProbability: 0,
     })
     expect(grid).toMatchObject(expectedGrid)
@@ -95,7 +95,7 @@ describe("Random grid creation", () => {
     const expectedGrid: GridType = [[true]]
     const grid = randomGrid({
       gridSize: 1,
-      rover: { x: -1, y: -1, direction: Direction.N },
+      rover: { x: -1, y: -1, direction: Direction.North },
       obstacleProbability: 1,
     })
     expect(grid).toMatchObject(expectedGrid)
@@ -105,7 +105,7 @@ describe("Random grid creation", () => {
     const expectedGrid: GridType = [[false]]
     const grid = randomGrid({
       gridSize: 1,
-      rover: { x: 0, y: 0, direction: Direction.N },
+      rover: { x: 0, y: 0, direction: Direction.North },
       obstacleProbability: 1,
     })
     expect(grid).toMatchObject(expectedGrid)

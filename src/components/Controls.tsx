@@ -30,7 +30,7 @@ const Controls: React.FC<{
       },
       direction: () => {
         // Only continue on valid values for direction
-        if (!Object.keys(Direction).includes(value)) return
+        if (!(value in Direction)) return
         rover.set({
           ...rover.position,
           direction: Direction[value as keyof typeof Direction],
@@ -81,13 +81,6 @@ const Controls: React.FC<{
     event.preventDefault()
   }
 
-  // Transform rover direction to a valid value for the <select>
-  // - rover.direction: 0, 90, 180, 270
-  // - <select> value: N, E, S, W
-  const direction = Object.entries(Direction).filter(
-    ([, val]) => val === rover.position.direction
-  )[0][0]
-
   return (
     <div className="App-controls">
       <form>
@@ -130,11 +123,16 @@ const Controls: React.FC<{
             />
           </label>
           <label>Direction</label>
-          <select name="direction" value={direction} onChange={onChange}>
-            <option value="N">North</option>
-            <option value="E">East</option>
-            <option value="S">South</option>
-            <option value="W">West</option>
+          <select
+            name="direction"
+            value={rover.position.direction}
+            onChange={onChange}
+          >
+            {Object.entries(Direction).map(([key, val]) => (
+              <option key={key} value={val}>
+                {key}
+              </option>
+            ))}
           </select>
         </fieldset>
         <fieldset>
