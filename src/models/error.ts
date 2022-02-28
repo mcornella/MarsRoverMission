@@ -1,7 +1,6 @@
-import { setUncaughtExceptionCaptureCallback } from "process"
 import { RoverPosition } from "./rover"
 
-class ErrorWithPosition extends Error {
+export class ErrorWithPosition extends Error {
   position: RoverPosition
 
   constructor(message: string, position: RoverPosition) {

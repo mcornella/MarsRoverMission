@@ -1,6 +1,7 @@
 import { Command, isValidCommandSequence } from "./command"
 import {
   EmptyCommandSequenceError,
+  ErrorWithPosition,
   InvalidCommandSequenceError,
   ObstacleEncounteredError,
   OutOfBoundsError,
@@ -19,21 +20,23 @@ export type RoverPosition = Coordinates & {
 }
 
 type Result<K extends string, T> = Record<K, T> & {
-  error?: Error
+  error?: Error | ErrorWithPosition
 }
-type RoverResult = Result<"position", RoverPosition>
+export type RoverResult = Result<"position", RoverPosition>
 
 export const runCommandSequence = (
   grid: GridType,
   rover: RoverPosition,
   sequence: string
 ): RoverResult => {
+  // Check command sequence is not empty
   if (sequence.length === 0)
     return {
       position: rover,
       error: new EmptyCommandSequenceError(),
     }
 
+  // Check command sequence only contains valid commands
   if (!isValidCommandSequence(sequence)) {
     return {
       position: rover,
@@ -41,7 +44,23 @@ export const runCommandSequence = (
     }
   }
 
+  // Check rover is in a valid grid cell
   let position = rover
+
+  if (isOutOfBounds(grid, position)) {
+    return {
+      position,
+      error: new OutOfBoundsError(position),
+    }
+  }
+
+  if (hasObstacle(grid, position)) {
+    return {
+      position,
+      error: new ObstacleEncounteredError(position),
+    }
+  }
+
   const commands = sequence.split("") as Command[]
   for (let i = 0; i < commands.length; i++) {
     const result = move(grid, position, commands[i])
