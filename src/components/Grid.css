@@ -1,7 +1,7 @@
 /* Grid */
 .App-grid {
-  --cell-size: 2rem;
-  font-size: var(--cell-size);
+  --grid-cell-size: 2rem;
+  font-size: var(--grid-cell-size);
   max-width: 100vw;
 }
 
@@ -18,12 +18,12 @@
   height: 0;
   z-index: 1;
   position: absolute;
-  left: 4px;
-  bottom: calc(var(--cell-size) * 1.38);
+  bottom: calc(var(--grid-cell-size) * 1.65);
+  left: calc(var(--grid-cell-size) * 0.44);
   border-style: solid;
   border-color: transparent transparent rgba(255, 0, 0, 0.5);
-  border-width: calc(var(--cell-size) / 2) calc(var(--cell-size) / 2)
-    var(--cell-size);
+  border-width: calc(var(--grid-cell-size) / 5);
+  border-bottom-width: calc(var(--grid-cell-size) / 2.5);
 }
 
 /* Cells */
