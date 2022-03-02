@@ -5,16 +5,24 @@ import { RoverPosition } from "../models/rover"
 
 import "./Grid.css"
 
-const GridCell: React.FC<{ isObstacle: boolean; willBeVisited: boolean }> = ({
+const GridCell: React.FC<{ isObstacle: boolean; visited: number }> = ({
   isObstacle,
-  willBeVisited,
+  visited,
 }) => {
+  const style = {
+    ["--brightness" as any]: 0.95 ** visited,
+  }
   return isObstacle ? (
-    <span data-obstacle data-future-visit={willBeVisited || null}>
+    <span data-obstacle data-visited={visited > 0 ? visited : undefined}>
       🪨
     </span>
   ) : (
-    <span data-future-visit={willBeVisited || null}>⬜</span>
+    <span
+      data-visited={visited > 0 ? visited : undefined}
+      style={visited > 0 ? style : undefined}
+    >
+      ⬜
+    </span>
   )
 }
 
@@ -37,8 +45,8 @@ const Grid: React.FC<{
   futurePath: RoverPosition[]
 }> = ({ grid, rover, futurePath }) => {
   const isRover = (x: number, y: number) => x === rover.x && y === rover.y
-  const willBeVisited = (x: number, y: number) =>
-    futurePath.some((f) => f.x === x && f.y === y)
+  const visits = (x: number, y: number) =>
+    futurePath.filter((path) => path.x === x && path.y === y).length
   return (
     <pre className="App-grid">
       <code>
@@ -51,7 +59,7 @@ const Grid: React.FC<{
                 <GridCell
                   key={`${x}-${y}`}
                   isObstacle={hasObstacle(grid, { x, y })}
-                  willBeVisited={willBeVisited(x, y)}
+                  visited={visits(x, y)}
                 />
               )
             )}

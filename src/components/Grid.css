@@ -11,6 +11,7 @@
   position: relative;
 }
 
+/* Rover direction indicator */
 .App-grid [data-rover]::before {
   display: block;
   content: "";
@@ -27,10 +28,10 @@
 }
 
 /* Cells */
-.App-grid [data-future-visit] {
-  filter: sepia(1);
+.App-grid [data-visited] {
+  filter: sepia(1) hue-rotate(310deg) brightness(var(--brightness));
 }
 
-.App-grid [data-future-visit][data-obstacle] {
+.App-grid [data-visited][data-obstacle] {
   filter: sepia(1) brightness(0.5) saturate(500%) hue-rotate(340deg);
 }
