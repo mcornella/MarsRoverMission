@@ -59,7 +59,9 @@ const Controls: React.FC<{
   }
 
   // Convert Arrow key presses to valid commands and react run sequence on Enter
-  const onCommandSequenceKeyDown: React.KeyboardEventHandler = (event) => {
+  const onCommandSequenceKeyDown: React.KeyboardEventHandler<
+    HTMLInputElement
+  > = (event) => {
     const keyHandler: Record<typeof event.key, Function> = {
       Enter() {
         sequence.run()
@@ -78,6 +80,11 @@ const Controls: React.FC<{
     if (!keyHandler.hasOwnProperty(event.key)) return
 
     keyHandler[event.key]()
+
+    // Scroll input content to last character
+    const input = event.target as HTMLInputElement
+    input.scrollLeft = input.scrollWidth
+
     event.preventDefault()
   }
 
