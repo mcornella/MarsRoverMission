@@ -1,12 +1,17 @@
 /* Controls */
 .App-controls {
   font-size: 1.25rem;
-  max-width: 500px;
+  width: fit-content;
   margin: 0 auto 2rem;
+  text-align: center;
 }
 
 .App-controls fieldset {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.App-controls label {
+  display: inline-block;
 }
 
 .App-controls button {

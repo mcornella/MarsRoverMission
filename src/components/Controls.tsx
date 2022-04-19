@@ -129,18 +129,20 @@ const Controls: React.FC<{
               onChange={onChange}
             />
           </label>
-          <label>Direction</label>
-          <select
-            name="direction"
-            value={rover.position.direction}
-            onChange={onChange}
-          >
-            {Object.entries(Direction).map(([key, val]) => (
-              <option key={key} value={val}>
-                {key}
-              </option>
-            ))}
-          </select>
+          <label>
+            Direction
+            <select
+              name="direction"
+              value={rover.position.direction}
+              onChange={onChange}
+            >
+              {Object.entries(Direction).map(([key, val]) => (
+                <option key={key} value={val}>
+                  {key}
+                </option>
+              ))}
+            </select>
+          </label>
         </fieldset>
         <fieldset>
           <legend>Command sequence</legend>
