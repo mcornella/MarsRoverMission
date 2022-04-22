@@ -44,7 +44,7 @@ const App: React.FC<{}> = () => {
 
   return (
     <div className="App">
-      <ErrorPrompt error={error} clear={() => setError(undefined)} />
+      <ErrorPrompt error={error} close={() => setError(undefined)} />
       <Controls
         rover={{ position: rover, set: setRover }}
         sequence={{ value: sequence, set: setCommandSequence, run: simulate }}

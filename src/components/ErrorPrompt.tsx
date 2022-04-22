@@ -27,9 +27,9 @@ const ErrorMessage: React.FC<{ error: Error }> = ({ error }) => {
   )
 }
 
-const ErrorPrompt: React.FC<{ error?: Error; clear: Function }> = ({
+const ErrorPrompt: React.FC<{ error?: Error; close: Function }> = ({
   error,
-  clear,
+  close,
 }) => {
   if (!error) return null
 
@@ -38,12 +38,26 @@ const ErrorPrompt: React.FC<{ error?: Error; clear: Function }> = ({
     promptRef.current?.focus()
   })
 
+  const onKeyEvent = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    const validKeys = [
+      "Enter",
+      "Escape",
+      "Backspace",
+      " ", // spacebar
+    ]
+    if (validKeys.includes(event.key)) {
+      close()
+    }
+  }
+
   return (
     <div
       className="App-error"
       ref={promptRef}
       tabIndex={-1}
-      onBlur={() => clear()}
+      onBlur={() => close()}
+      onKeyDown={onKeyEvent}
     >
       <div className="App-error__border">
         <ErrorMessage error={error} />
