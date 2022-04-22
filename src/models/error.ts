@@ -17,10 +17,10 @@ export class OutOfBoundsError extends ErrorWithPosition {
   }
 }
 
-export class ObstacleEncounteredError extends ErrorWithPosition {
+export class ObstacleFoundError extends ErrorWithPosition {
   constructor(position: RoverPosition) {
     super(`Obstacle encountered at (${position.x}, ${position.y})!`, position)
-    this.name = "ObstacleEncounteredError"
+    this.name = "ObstacleFoundError"
   }
 }
 

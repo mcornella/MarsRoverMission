@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react"
-import { ObstacleEncounteredError, OutOfBoundsError } from "../models/error"
+import { ObstacleFoundError, OutOfBoundsError } from "../models/error"
 
 import "./ErrorPrompt.css"
 
@@ -13,7 +13,7 @@ const ErrorMessage: React.FC<{ error: Error }> = ({ error }) => {
         </strong>
       </p>
     </>
-  ) : error instanceof ObstacleEncounteredError ? (
+  ) : error instanceof ObstacleFoundError ? (
     <>
       <p>Rover found an obstacle at</p>
       <p>

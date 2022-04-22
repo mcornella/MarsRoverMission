@@ -3,7 +3,7 @@ import {
   EmptyCommandSequenceError,
   ErrorWithPosition,
   InvalidCommandSequenceError,
-  ObstacleEncounteredError,
+  ObstacleFoundError,
   OutOfBoundsError,
 } from "./error"
 import { Coordinates, GridType, hasObstacle, isOutOfBounds } from "./grid"
@@ -57,7 +57,7 @@ export const runCommandSequence = (
   if (hasObstacle(grid, position)) {
     return {
       position,
-      error: new ObstacleEncounteredError(position),
+      error: new ObstacleFoundError(position),
     }
   }
 
@@ -90,7 +90,7 @@ const move = (
   if (hasObstacle(grid, { x, y })) {
     return {
       position: { ...rover, direction },
-      error: new ObstacleEncounteredError({ x, y, direction }),
+      error: new ObstacleFoundError({ x, y, direction }),
     }
   }
 

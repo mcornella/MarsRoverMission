@@ -4,7 +4,7 @@ import { Command } from "./command"
 import {
   EmptyCommandSequenceError,
   InvalidCommandSequenceError,
-  ObstacleEncounteredError,
+  ObstacleFoundError,
   OutOfBoundsError,
 } from "./error"
 import { hasObstacle } from "./grid"
@@ -41,7 +41,7 @@ describe("Command runner", () => {
     const grid = [[true]]
     const rover = { x: 0, y: 0, direction: Direction.East }
     const { error } = runCommandSequence(grid, rover, Command.Forward)
-    expect(error).toBeInstanceOf(ObstacleEncounteredError)
+    expect(error).toBeInstanceOf(ObstacleFoundError)
   })
 
   it("Returns error on moving outside grid", () => {
@@ -86,7 +86,7 @@ describe("Command runner", () => {
     assert(hasObstacle(grid, { x: 0, y: 1 }))
 
     const { error } = runCommandSequence(grid, rover, command)
-    expect(error).toBeInstanceOf(ObstacleEncounteredError)
+    expect(error).toBeInstanceOf(ObstacleFoundError)
   })
 
   it("Returns error on moving to a cell with an obstacle with updated direction", () => {
