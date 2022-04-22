@@ -3,6 +3,30 @@ import { ObstacleEncounteredError, OutOfBoundsError } from "../models/error"
 
 import "./ErrorPrompt.css"
 
+const ErrorMessage: React.FC<{ error: Error }> = ({ error }) => {
+  return error instanceof OutOfBoundsError ? (
+    <>
+      <p>Rover move out of bounds at</p>
+      <p>
+        <strong>
+          [{error.position.x}, {error.position.y}]
+        </strong>
+      </p>
+    </>
+  ) : error instanceof ObstacleEncounteredError ? (
+    <>
+      <p>Rover found an obstacle at</p>
+      <p>
+        <strong>
+          [{error.position.x}, {error.position.y}]
+        </strong>
+      </p>
+    </>
+  ) : (
+    <p>{error.message}</p>
+  )
+}
+
 const ErrorPrompt: React.FC<{ error?: Error; clear: Function }> = ({
   error,
   clear,
@@ -14,32 +38,6 @@ const ErrorPrompt: React.FC<{ error?: Error; clear: Function }> = ({
     promptRef.current?.focus()
   })
 
-  let message = <p>{error.message}</p>
-
-  if (error instanceof OutOfBoundsError) {
-    message = (
-      <>
-        <p>Rover would move out of bounds at</p>
-        <p>
-          <strong>
-            [{error.position.x}, {error.position.y}]
-          </strong>
-        </p>
-      </>
-    )
-  } else if (error instanceof ObstacleEncounteredError) {
-    message = (
-      <>
-        <p>Rover encountered an obstacle at</p>
-        <p>
-          <strong>
-            [{error.position.x}, {error.position.y}]
-          </strong>
-        </p>
-      </>
-    )
-  }
-
   return (
     <div
       className="App-error"
@@ -47,7 +45,9 @@ const ErrorPrompt: React.FC<{ error?: Error; clear: Function }> = ({
       tabIndex={-1}
       onBlur={() => clear()}
     >
-      <div className="App-error__border">{message}</div>
+      <div className="App-error__border">
+        <ErrorMessage error={error} />
+      </div>
     </div>
   )
 }
